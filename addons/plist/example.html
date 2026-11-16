@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>常用链接</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --fg:#1a1a1a;
+    --muted:#6b6b6b;
+    --line:#ebebeb;
+    --btn-border:#d9d9d9;
+    --btn-hover:#f5f5f5;
+    --ok:#2e7d32;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#111111;
+      --fg:#eeeeee;
+      --muted:#999999;
+      --line:#262626;
+      --btn-border:#3a3a3a;
+      --btn-hover:#1e1e1e;
+      --ok:#6cc06f;
+    }
+  }
+
+  *{ box-sizing: border-box; }
+  html, body{ background: var(--bg); }
+
+  body{
+    margin: 0;
+    padding: 32px 20px 48px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+                 "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    color: var(--fg);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  main{ max-width: 680px; margin: 0 auto; }
+
+  .item{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .item:first-child{ border-top: 1px solid var(--line); }
+
+  .url{
+    flex: 1 1 auto;
+    min-width: 0;            /* 关键：允许在 flex 中收缩换行 */
+    margin: 0;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: .2px;
+    overflow-wrap: anywhere; /* 长 URL 自动换行，不撑破布局 */
+    word-break: break-all;
+  }
+
+  .copy{
+    flex: 0 0 auto;
+    appearance: none;
+    font: inherit;
+    font-size: 13px;
+    line-height: 1;
+    padding: 8px 12px;
+    min-width: 64px;
+    color: var(--muted);
+    background: transparent;
+    border: 1px solid var(--btn-border);
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color .15s, color .15s, border-color .15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .copy:hover{ background: var(--btn-hover); color: var(--fg); }
+  .copy:active{ transform: translateY(1px); }
+  .copy:focus-visible{ outline: 2px solid var(--fg); outline-offset: 2px; }
+  .copy.done{ color: var(--ok); border-color: var(--ok); }
+
+  @media (max-width: 420px){
+    body{ padding: 24px 16px 40px; }
+    .url{ font-size: 14px; }
+    .copy{ padding: 7px 10px; min-width: 56px; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="item">
+    <h3 class="url">https://www.example.com/</h3>
+    <button class="copy" type="button">复制</button>
+  </div>
+
+  <div class="item">
+    <h3 class="url">https://developer.mozilla.org/zh-CN/docs/Web/HTML/Element/title</h3>
+    <button class="copy" type="button">复制</button>
+  </div>
+
+  <div class="item">
+    <h3 class="url">https://github.com/</h3>
+    <button class="copy" type="button">复制</button>
+  </div>
+
+  <div class="item">
+    <h3 class="url">https://example.org/some/really/long/path/that/keeps/going?query=1&amp;another=2</h3>
+    <button class="copy" type="button">复制</button>
+  </div>
+</main>
+
+<script>
+(function () {
+  // 复制文本：优先 Clipboard API，不可用时回退到 execCommand
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (e) {
+        // 继续走回退方案
+      }
+    }
+
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length); // iOS 需要
+
+    let ok = false;
+    try {
+      ok = document.execCommand('copy');
+    } catch (e) {
+      ok = false;
+    }
+    document.body.removeChild(ta);
+    return ok;
+  }
+
+  document.addEventListener('click', async function (e) {
+    const btn = e.target.closest('.copy');
+    if (!btn || btn.disabled) return;
+
+    const item = btn.closest('.item');
+    const urlEl = item && item.querySelector('.url');
+    if (!urlEl) return;
+
+    const text = urlEl.textContent.trim();
+    const label = btn.textContent;
+
+    btn.disabled = true;
+    const ok = await copyText(text);
+
+    btn.textContent = ok ? '已复制' : '复制失败';
+    btn.classList.toggle('done', ok);
+
+    setTimeout(function () {
+      btn.textContent = label;
+      btn.classList.remove('done');
+      btn.disabled = false;
+    }, 1500);
+  });
+})();
+</script>
+</body>
+</html>

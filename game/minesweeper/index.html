@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minesweeper</title>
+    <style>
+        /* 整体页面样式 */
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* 游戏标题样式 */
+        h1 {
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+
+        /* 棋盘容器样式 */
+        #board {
+            display: grid;
+            grid-template-columns: repeat(10, 32px);
+            gap: 4px;
+            background-color: #222;
+            border: 6px solid #333;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+            margin-bottom: 25px;
+        }
+
+        /* 单个格子样式 */
+        .cell {
+            width: 32px;
+            height: 32px;
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid;
+            border-color: #444 #222 #222 #444;
+            transition: all 0.2s ease;
+        }
+
+        /* 鼠标悬停在格子上的样式 */
+        .cell:hover {
+            background-color: #444;
+        }
+
+        /* 地雷格子样式 */
+        .mine {
+            background-color: #ff4444;
+            border-color: #ff4444;
+            color: white;
+        }
+
+        /* 已翻开格子样式 */
+        .revealed {
+            background-color: #2a2a2a;
+            border-color: #333;
+        }
+
+        /* 旗帜标记样式 */
+        .flagged {
+            background-color: #ffcc00;
+            color: #000;
+        }
+
+        /* 不同数字对应的颜色样式 */
+        .number-1 {
+            color: #66b3ff;
+        }
+
+        .number-2 {
+            color: #66ff66;
+        }
+
+        .number-3 {
+            color: #ff6666;
+        }
+
+        .number-4 {
+            color: #9966ff;
+        }
+
+        .number-5 {
+            color: #ff9933;
+        }
+
+        .number-6 {
+            color: #33cccc;
+        }
+
+        .number-7 {
+            color: #cccccc;
+        }
+
+        .number-8 {
+            color: #888888;
+        }
+
+        /* 重新开始按钮样式 */
+        #restart-button {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        /* 重新开始按钮鼠标悬停样式 */
+        #restart-button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 计时器样式 */
+        #timer {
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <!--h1>Game</h1-->
+    <div id="timer">Time: 0 Seconds</div>
+    <div id="board"></div>
+    <button id="restart-button">Restart</button>
+    <script>
+        // 棋盘行数
+        const ROWS = 10;
+        // 棋盘列数
+        const COLS = 10;
+        // 地雷数量
+        const MINES = 10;
+
+        // 获取棋盘容器元素
+        const board = document.getElementById('board');
+        // 获取重新开始按钮元素
+        const restartButton = document.getElementById('restart-button');
+        // 获取计时器元素
+        const timerElement = document.getElementById('timer');
+
+        let grid = []; // 棋盘数据
+        let flagged = []; // 标记的地雷
+        let revealed = []; // 已揭示的格子
+        let startTime = null; // 游戏开始时间
+        let timerInterval = null; // 计时器
+
+        // 初始化棋盘数据
+        function initBoard() {
+            grid = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+            flagged = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+            revealed = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+
+            let minesPlaced = 0;
+            while (minesPlaced < MINES) {
+                const row = Math.floor(Math.random() * ROWS);
+                const col = Math.floor(Math.random() * COLS);
+                if (grid[row][col] !== -1) {
+                    grid[row][col] = -1;
+                    minesPlaced++;
+                }
+            }
+
+            for (let i = 0; i < ROWS; i++) {
+                for (let j = 0; j < COLS; j++) {
+                    if (grid[i][j] !== -1) {
+                        let count = 0;
+                        for (let x = Math.max(i - 1, 0); x <= Math.min(i + 1, ROWS - 1); x++) {
+                            for (let y = Math.max(j - 1, 0); y <= Math.min(j + 1, COLS - 1); y++) {
+                                if (grid[x][y] === -1) {
+                                    count++;
+                                }
+                            }
+                        }
+                        grid[i][j] = count;
+                    }
+                }
+            }
+
+            return grid;
+        }
+
+        // 渲染棋盘到页面
+        function renderBoard() {
+            board.innerHTML = '';
+            for (let i = 0; i < ROWS; i++) {
+                for (let j = 0; j < COLS; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.dataset.row = i;
+                    cell.dataset.col = j;
+                    cell.addEventListener('click', () => handleClick(i, j));
+                    cell.addEventListener('contextmenu', (e) => handleRightClick(e, i, j));
+                    if (revealed[i][j]) {
+                        cell.textContent = grid[i][j] > 0 ? grid[i][j] : '';
+                        cell.classList.add('revealed');
+                        if (grid[i][j] > 0) {
+                            cell.classList.add(`number-${grid[i][j]}`);
+                        }
+                    } else if (flagged[i][j]) {
+                        cell.textContent = '🚩';
+                        cell.classList.add('flagged');
+                    }
+                    board.appendChild(cell);
+                }
+            }
+        }
+
+        // 处理格子点击事件
+        function handleClick(row, col) {
+            if (flagged[row][col]) return; // 如果格子被标记，则不能点击
+            if (grid[row][col] === -1) {
+                revealMines();
+                alert('游戏结束，你踩到地雷了！\n\nGame Over, you stepped on a landmine');
+                clearInterval(timerInterval);
+            } else {
+                revealCell(row, col);
+                if (checkWin()) {
+                    clearInterval(timerInterval);
+                    const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                    alert(`Congratulations, you won!\n\n恭喜你，赢了！用时: ${elapsed} 秒`);
+                }
+            }
+        }
+
+        // 处理右键点击事件
+        function handleRightClick(e, row, col) {
+            e.preventDefault();
+            if (!revealed[row][col]) {
+                flagged[row][col] = !flagged[row][col];
+                renderBoard();
+            }
+        }
+
+        // 揭示格子
+        function revealCell(row, col) {
+            if (revealed[row][col]) return;
+            revealed[row][col] = true;
+            if (grid[row][col] === 0) {
+                expandEmptyCells(row, col);
+            }
+            renderBoard();
+        }
+
+        // 展开空白格子
+        function expandEmptyCells(row, col) {
+            for (let x = Math.max(row - 1, 0); x <= Math.min(row + 1, ROWS - 1); x++) {
+                for (let y = Math.max(col - 1, 0); y <= Math.min(col + 1, COLS - 1); y++) {
+                    if (!revealed[x][y] && !flagged[x][y]) {
+                        revealCell(x, y);
+                    }
+                }
+            }
+        }
+
+        // 显示所有地雷
+        function revealMines() {
+            for (let i = 0; i < ROWS; i++) {
+                for (let j = 0; j < COLS; j++) {
+                    if (grid[i][j] === -1) {
+                        const cell = document.querySelector(`[data-row="${i}"][data-col="${j}"]`);
+                        cell.classList.add('mine');
+                        cell.textContent = '💣';
+                    }
+                }
+            }
+        }
+
+        // 检查是否胜利
+        function checkWin() {
+            for (let i = 0; i < ROWS; i++) {
+                for (let j = 0; j < COLS; j++) {
+                    if (grid[i][j] !== -1 && !revealed[i][j]) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        // 更新计时器
+        function updateTimer() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            timerElement.textContent = `Time: ${elapsed} Seconds`;
+        }
+
+        // 重新开始游戏
+        function restartGame() {
+            clearInterval(timerInterval);
+            grid = initBoard();
+            flagged = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+            revealed = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+            startTime = Date.now();
+            timerInterval = setInterval(updateTimer, 1000);
+            renderBoard();
+        }
+
+        // 初始化游戏
+        restartGame();
+
+        // 为重新开始按钮添加点击事件监听器
+        restartButton.addEventListener('click', restartGame);
+    </script>
+</body>
+
+</html>

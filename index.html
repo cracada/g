@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>hello_world</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    height:100%;background:#000;color:#fff;
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    overflow:hidden;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .term{
+    font-size:clamp(20px,5vw,44px);
+    font-weight:500;
+    letter-spacing:0.02em;
+    white-space:pre;
+  }
+  .prompt{color:#666;margin-right:1ch}
+  .cursor{
+    display:inline-block;
+    width:0.55em;height:1.05em;
+    background:#fff;
+    vertical-align:text-bottom;
+    margin-left:0.15ch;
+    animation:blink 1.05s steps(1) infinite;
+  }
+  @keyframes blink{50%{opacity:0}}
+</style>
+</head>
+<body>
+<div class="term"><span class="prompt">$</span><span id="text"></span><span class="cursor"></span></div>
+<script>
+  const target = 'hello world';
+  const textEl = document.getElementById('text');
+  let i = 0;
+  setTimeout(() => {
+    (function type() {
+      if (i < target.length) {
+        textEl.textContent += target[i++];
+        setTimeout(type, 80 + Math.random() * 80);
+      }
+    })();
+  }, 800);
+</script>
+</body>
+</html>

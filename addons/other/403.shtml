@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>403 Forbidden</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+</head><body style="font-family:'Times new roman',sans-sierf;font-size:1.1em;">
+<h1>Forbidden</h1>
+<p>You don't have permission to access this resource.</p>
+<hr>
+<p><!--#echo var="REMOTE_ADDR" --></p>
+</body></html>

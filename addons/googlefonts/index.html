@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Google WebFonts</title>
+  <style>
+  body{margin:8px;line-height:170%;}
+
+  /* 注意：这里将 font-weight 改为了 400，这样 CSS 设置 700 时浏览器会自动合成加粗 */
+  @font-face {font-family: 'Roboto';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/roboto-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Lato';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/lato-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Concert One';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/concert-one-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Merriweather';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/merriweather-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Montserrat';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/montserrat-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Nunito Sans';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/nunito-sans-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Open Sans';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/open-sans-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Oswald';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/oswald-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Prompt';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/prompt-regular.woff2') format('woff2');}
+  @font-face {font-family: 'PT Sans';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/pt-sans-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Raleway';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/raleway-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Source Sans Pro';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/source-sans-pro-regular.woff2') format('woff2');}
+  @font-face {font-family: 'Work Sans';font-style: normal;font-weight: 400;font-display: swap;src: url('https://g.221220.xyz/addons/googlefonts/work-sans-regular.woff2') format('woff2');}
+
+  /* ================= 居中工具栏 ================= */
+  .toolbar{
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    justify-content: center; /* 居中对齐 */
+    align-items: center;
+    flex-wrap: wrap; /* 屏幕窄时自动换行 */
+    gap: 12px;
+    padding: 10px 12px;
+    margin: 0 0 16px;
+    background: #fff;
+    border-bottom: 1px solid #e0e0e0;
+    font-family: system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.2;
+  }
+  .toolbar .group{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toolbar .divider{
+    width: 1px;
+    height: 20px;
+    background: #e0e0e0;
+    margin: 0 4px;
+  }
+  .toolbar .title{ color:#666; }
+  .toolbar button{
+    min-width: 46px;
+    padding: 6px 10px;
+    font: inherit;
+    font-size: 15px;
+    line-height: 1;
+    color: #222;
+    background: #f5f5f5;
+    border: 1px solid #c4c4c4;
+    border-radius: 8px;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .toolbar button:hover:not(:disabled){ background:#ececec; }
+  .toolbar button:active:not(:disabled){ background:#e0e0e0; }
+  .toolbar button:disabled{ opacity:.4; cursor:not-allowed; }
+  .toolbar button.active{
+    background: #e0e0e0;
+    border-color: #999;
+    font-weight: 700;
+  }
+  .toolbar .size{
+    min-width: 50px;
+    text-align: center;
+    font-weight: 700;
+    color: #111;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ================= 预览区 ================= */
+  .demo{
+    font-size: 32px; /* 默认字号 */
+    font-weight: 700; /* 默认字重 */
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  .demo h2{
+    font-size: 1em; /* 继承 .demo 的字号 */
+    /* 继承 .demo 的字重 */
+    line-height: 1.6;
+    margin: .9em 0;
+  }
+
+  /* 网址提示文字固定 14px，不随字号放大而夸张 */
+  .t{
+    display: inline-block;
+    font-family: sans-serif;
+    font-size: 14px; 
+    font-weight: 400; /* 网址固定为常规粗细 */
+    line-height: 1.5;
+    color: #aaa;
+    word-break: break-all;
+  }
+  </style>
+ </head>
+ <body>
+
+<!-- 工具栏 -->
+<div class="toolbar">
+  <div class="group">
+    <span class="title">字号</span>
+    <button type="button" id="btnMinus" aria-label="减小字号" title="减小字号">A−</button>
+    <span class="size" id="sizeLabel">32px</span>
+    <button type="button" id="btnPlus" aria-label="增大字号" title="增大字号">A+</button>
+  </div>
+  
+  <div class="divider"></div>
+  
+  <div class="group">
+    <span class="title">字重</span>
+    <button type="button" id="btnWeight400">400</button>
+    <button type="button" id="btnWeight700" class="active">700</button>
+  </div>
+</div>
+
+<!-- 预览内容 -->
+<div class="demo" id="demo">
+<h2 style="font-family:'Roboto';"><span class='t'>Roboto：https://lib.baomitu.com/fonts/roboto/roboto-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Lato';"><span class='t'>Lato:https://lib.baomitu.com/fonts/lato/lato-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Concert One';"><span class='t'>Concert One:https://lib.baomitu.com/fonts/concert-one/concert-one-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Merriweather';"><span class='t'>Merriweather:https://lib.baomitu.com/fonts/merriweather/merriweather-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Montserrat';"><span class='t'>Montserrat:https://lib.baomitu.com/fonts/montserrat/montserrat-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Nunito Sans';"><span class='t'>Nunito Sans:https://lib.baomitu.com/fonts/nunito-sans/nunito-sans-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Open Sans';"><span class='t'>Open Sans:https://lib.baomitu.com/fonts/open-sans/open-sans-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Oswald';"><span class='t'>Oswald:https://lib.baomitu.com/fonts/oswald/oswald-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Prompt';"><span class='t'>Prompt:https://lib.baomitu.com/fonts/prompt/prompt-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'PT Sans';"><span class='t'>PT Sans:https://lib.baomitu.com/fonts/pt-sans/pt-sans-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Raleway';"><span class='t'>Raleway:https://lib.baomitu.com/fonts/raleway/raleway-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Source Sans Pro';"><span class='t'>Source Sans Pro:https://lib.baomitu.com/fonts/source-sans-pro/source-sans-pro-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+<h2 style="font-family:'Work Sans';"><span class='t'>Work Sans:https://lib.baomitu.com/fonts/work-sans/work-sans-regular.woff2</span><br>1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</h2>
+</div>
+
+<p style="font-size:14px;color:#999;font-family:sans-serif;">https://cdn.baomitu.com/index/fonts</p>
+
+<script>
+(function () {
+  // 字号梯度：包含你要求的 8, 9, 10, 11, 12, 14, 16, 18, 20, 22，及更大的字号
+  var SIZES = [6,7,8, 9, 10, 11, 12, 13,14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 36, 40,48,64,72];
+  
+  var DEFAULT_SIZE = 32;
+  var sizeIdx = SIZES.indexOf(DEFAULT_SIZE);
+
+  var demo = document.getElementById('demo');
+  var label = document.getElementById('sizeLabel');
+  
+  var btnMinus = document.getElementById('btnMinus');
+  var btnPlus = document.getElementById('btnPlus');
+  
+  var btnW400 = document.getElementById('btnWeight400');
+  var btnW700 = document.getElementById('btnWeight700');
+
+  var currentWeight = 700; // 默认字重 700
+
+  function render() {
+    // 1. 应用字号
+    var size = SIZES[sizeIdx];
+    demo.style.fontSize = size + 'px';
+    label.textContent = size + 'px';
+    btnMinus.disabled = (sizeIdx === 0);
+    btnPlus.disabled  = (sizeIdx === SIZES.length - 1);
+
+    // 2. 应用字重，并更新按钮高亮状态
+    demo.style.fontWeight = currentWeight;
+    if (currentWeight === 400) {
+      btnW400.classList.add('active');
+      btnW700.classList.remove('active');
+    } else {
+      btnW400.classList.remove('active');
+      btnW700.classList.add('active');
+    }
+  }
+
+  // 字号切换事件
+  btnMinus.addEventListener('click', function () {
+    if (sizeIdx > 0) { sizeIdx--; render(); }
+  });
+  btnPlus.addEventListener('click', function () {
+    if (sizeIdx < SIZES.length - 1) { sizeIdx++; render(); }
+  });
+
+  // 字重切换事件
+  btnW400.addEventListener('click', function () {
+    currentWeight = 400;
+    render();
+  });
+  btnW700.addEventListener('click', function () {
+    currentWeight = 700;
+    render();
+  });
+
+  // 初始化
+  render();
+})();
+</script>
+
+ </body>
+</html>

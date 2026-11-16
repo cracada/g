@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=2.0" />
+<title>Total Commander 命令行参数</title>
+<style type="text/css">
+table {
+	color:#333333;
+	width:100%;
+	text-align:left;
+	font-size:0.8em;
+	margin:0.5em 0;
+	border-top:1px solid #eee;
+	border-left:1px solid #eee;
+	border-spacing:0;
+}
+th {
+	background-color:#ccc;
+	padding:8px;
+}
+tr:nth-child(odd) {
+	background-color:#fefefe;
+}
+tr:nth-child(even) {
+	background-color:#f0f8ff;
+}
+td {
+	padding:8px;
+	border-right:1px solid #eee;
+	border-bottom:1px solid #eee;
+}
+td:hover {
+	border:1px solid #f00;
+	background-color:#ffc;
+}
+.info{
+	font-size:0.8em;
+	margin:1em 0;
+	padding:0.5em 0;
+}
+.footer {
+	margin-top:1.5em;
+	font-size:0.8em;
+	color:#aaa;
+	line-height:1.5;
+}
+.footer a {
+	text-decoration:none;
+	font-size:1em;
+	color:#aaa;
+}
+.footer a:hover {
+	text-decoration:underline;
+}
+@media screen and (min-width:720px) {
+	table {
+		width:720px;
+	}
+}
+</style>
+</head>
+<body>
+	<center>
+<h3>Total Commander 命令行参数</h3>
+<div class="info">
+	<!-pending->
+</div>
+<table border="1">
+	<tr><th>参数</th><th>说明</th></tr>
+	<tr><td>?</td><td class="c1">为 第一个 参数时，启动程序前显示对话框，列出其余参数，允许你修改，甚至中止程序运行。</td></tr>
+	<tr><td>%P</td><td>插入来源路径，以反斜杠(\) 结尾。</td></tr>
+	<tr><td>%N</td><td>插入光标所在的文件名。</td></tr>
+	<tr><td>%T</td><td>插入当前目标路径，对压缩程序尤其有用。</td></tr>
+	<tr><td>%M</td><td>插入目标文件夹的当前文件名。</td></tr>
+	<tr><td>%O</td><td>插入当前文件名，不含扩展名。</td></tr>
+	<tr><td>%E</td><td>插入当前文件的 扩展名 （无前导句号）。</td></tr>
+	<tr><td>%S</td><td>插入所有选中文件的文件名。包含空格的名字放在双引号中。请注意命令行最大长度是32767个字符。</td></tr>
+	<tr><td>%S10</td><td>插入（最多）前10个选中文件的文件名。这样可以限定传递给程序的文件名个数。可指定其它数字。</td></tr>
+	<tr><td>%P%S</td><td>插入所有选中文件的全路径文件名。包含空格的名字将放在双引号中。无须自己在 %P%S 前后加双引号！</td></tr>
+	<tr><td>%%</td><td>插入百分号。</td></tr>
+	<tr><td colspan="2">
+		备注:<ul>
+			<li>%N 和 %M 插入长文件名；</li>
+			<li>%n 和 %m 插入8.3 DOS 文件名；</li>
+			<li>%P 和 %T 插入长路径名，%p 和 %t 插入短路径名（%o，%e 和 %s同样）；</li>
+			<li>如果直接在 %S 或 %s 前写 %P 或 %p，%T 或 %t，将插入每个文件的“路径名+文件名”。<br>例如：%P%S 代表所有选中文件的 长路径名 和 长文件名。</li>
+	</ul></td></tr>
+</table>
+<table border="1">
+	<tr><th>参数</th><th>说明</th></tr>
+	<tr><td>%L</td><td>包含完整路径的长文件名，如，C:\Program Files\Long name.exe</td></tr>
+	<tr><td>%l</td><td>（小写 L）包含完整路径的短文件名，如，C:\PROGRA~1\LONGNA~1.EXE</td></tr>
+	<tr><td>%F</td><td>不含路径的长文件名，如:Long name.exe</td></tr>
+	<tr><td>%f</td><td>不含路径的短文件名，如:LONGNA~1.EXE</td></tr>
+	<tr><td>%D</td><td>包含完整路径的短文件名，重音（accent）使用DOS字符集。</td></tr>
+	<tr><td>%d</td><td>不含路径的短文件名，重音（accent）使用DOS字符集。</td></tr>
+	<tr><td colspan="2">备注:<br>以上参数在 TEMP 文件夹创建包含选定文件和文件夹名字的列表文件，并插入该文件的名字。列表文件在调用程序退出后自动删除。</td></tr>
+</table>
+<table border="1">
+	<tr><th>参数</th><th>说明</th></tr>
+	<tr><td>%A</td><td>插入已输入的命令行的其余部分。</td></tr>
+	<tr><td>%A1 ... %A9</td><td>插入第1至9个参数。</td></tr>
+	<tr><td colspan="2">备注:<br>以上参数仅用于命令别名。</td></tr>
+</table>
+<center>
+	<div class="footer"><script language="javaScript">var mydate=new Date();document.write(mydate.getFullYear()+"<br>最后更新:"+document.lastModified)</script></div>
+</body>
+</html>

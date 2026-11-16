@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Hello World</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%;overflow:hidden;background:#111318;cursor:crosshair}
+  canvas{display:block}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+
+<script>
+(() => {
+  const cv  = document.getElementById('c');
+  const ctx = cv.getContext('2d');
+
+  const GAP = 5;      // 采样间距
+  const R   = 90;     // 鼠标影响半径
+  const mouse = { x: -9999, y: -9999 };
+
+  let W = 0, H = 0, particles = [];
+
+  /* 把文字画到离屏画布，逐像素采样出粒子目标点 */
+  function build() {
+    const off = document.createElement('canvas');
+    off.width = W; off.height = H;
+    const o = off.getContext('2d');
+
+    const fs = Math.min(W / 8.5, H / 3.4);
+    o.font = `700 ${fs}px ui-monospace,Menlo,monospace`;
+    o.textAlign = 'center';
+    o.textBaseline = 'middle';
+    o.fillStyle = '#fff';
+    o.fillText('Hello World', W / 2, H / 2);
+
+    const data = o.getImageData(0, 0, W, H).data;
+    const pts = [];
+    for (let y = 0; y < H; y += GAP) {
+      for (let x = 0; x < W; x += GAP) {
+        if (data[(y * W + x) * 4 + 3] > 128) pts.push({ x, y });
+      }
+    }
+
+    if (particles.length === pts.length) {
+      particles.forEach((p, i) => { p.tx = pts[i].x; p.ty = pts[i].y; });
+    } else {
+      particles = pts.map(pt => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        tx: pt.x, ty: pt.y,
+        vx: 0, vy: 0
+      }));
+    }
+  }
+
+  function resize() {
+    W = cv.width  = innerWidth;
+    H = cv.height = innerHeight;
+    build();
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+
+    for (const p of particles) {
+      // 鼠标排斥
+      const dx = p.x - mouse.x, dy = p.y - mouse.y;
+      const d2 = dx * dx + dy * dy;
+      if (d2 < R * R) {
+        const d = Math.sqrt(d2) || 0.001;
+        const f = (1 - d / R) * 10;
+        p.vx += (dx / d) * f;
+        p.vy += (dy / d) * f;
+      }
+
+      // 弹回目标点
+      p.vx += (p.tx - p.x) * 0.08;
+      p.vy += (p.ty - p.y) * 0.08;
+
+      p.vx *= 0.82;
+      p.vy *= 0.82;
+      p.x  += p.vx;
+      p.y  += p.vy;
+
+      ctx.fillStyle = '#6f7f9e';
+      ctx.fillRect(p.x, p.y, 2, 2);
+    }
+
+    requestAnimationFrame(loop);
+  }
+
+  addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  addEventListener('mouseleave', () => { mouse.x = mouse.y = -9999; });
+
+  addEventListener('touchmove', e => {
+    const t = e.touches[0];
+    mouse.x = t.clientX; mouse.y = t.clientY;
+  }, { passive: true });
+  addEventListener('touchend', () => { mouse.x = mouse.y = -9999; });
+
+  let rt;
+  addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(resize, 150);
+  });
+
+  resize();
+  loop();
+})();
+</script>
+</body>
+</html>

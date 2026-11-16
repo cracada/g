@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8">
+<title>401 Unauthorized</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+</head><body style="font-family:'Times new roman',sans-sierf;font-size:1.1em;">
+<h1>Unauthorized</h1>
+<p>The server could not verify that you are authorized to access this resource!</p>
+<hr>
+<p><!--#echo var="REMOTE_ADDR" --></p>
+</body></html>
+<!--#echo var
